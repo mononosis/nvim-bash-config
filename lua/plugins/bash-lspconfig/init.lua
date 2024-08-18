@@ -1,6 +1,9 @@
 local M = {}
+
+local lspconfig = require('lspconfig')
+
 function M.setup()
-  local lspconfig = require('lspconfig')
+
   local caps = vim.tbl_deep_extend(
     'force',
     vim.lsp.protocol.make_client_capabilities(),
@@ -14,16 +17,19 @@ function M.setup()
     autostart = true,
     on_attach = function(_, bufnr)
       -- Custom on_attach logic
-      vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>fl', '<cmd>lua vim.lsp.buf.format()<CR>',
-        { noremap = true, silent = true })
       vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>t', '<cmd>!bash %<CR>', { noremap = true, silent = true })
+      vim.api.nvim_set_keymap(
+        "n",
+        "<leader>fl",
+        ":!shfmt -i 2 -w %<CR>",
+        { noremap = true, silent = true }
+      )
     end
     ,
     capabilities = caps,
     cmd = { "bash-language-server", "start" },
     settings = {
-      ['nil'] = {
-        testSetting = 42,
+      bash = {
         formatting = {
           command = { "shfmt" },
         },
